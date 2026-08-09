@@ -154,6 +154,27 @@ Marche à suivre détaillée : [`docs/DEPLOIEMENT_RAILWAY.md`](docs/DEPLOIEMENT_
 
 ---
 
+## Images
+
+Formats acceptés à l'upload : **JPEG, PNG, GIF, WebP et HEIC**.
+
+C'est le contenu réel du fichier qui décide, jamais son extension ni le
+`Content-Type` annoncé : le fichier est décodé par Pillow, et le nom de stockage
+est toujours regénéré côté serveur (spec §51).
+
+Les photos **HEIC** (format par défaut des iPhone) sont acceptées puis
+**converties en JPEG**, car Chrome et Firefox ne savent pas les afficher.
+L'orientation EXIF est appliquée à la conversion, sans quoi les photos prises en
+portrait apparaîtraient couchées.
+
+La taille maximale est une limite **technique** anti-déni de service, réglable
+via `MAX_UPLOAD_IMAGE_SIZE` (5 Mo par défaut). Ce n'est pas une règle métier.
+
+Une image peut aussi être fournie par **URL distante**, sans téléchargement local.
+Si les deux sont renseignées, l'upload prime.
+
+---
+
 ## Comptes et validation
 
 L'inscription ne demande qu'un pseudo et un mot de passe : aucune adresse email.

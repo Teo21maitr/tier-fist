@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
 from accounts.serializers import PublicUserSerializer
-from common.uploads import normalize_uploaded_image_name, validate_image_upload
+from common.uploads import prepare_image_upload
 from tierlists.constants import (
     ALLOWED_COEFFICIENTS,
     COEFFICIENT_SLOTS,
@@ -95,11 +95,10 @@ class ItemWriteSerializer(serializers.ModelSerializer):
         if value in (None, ""):
             return value
         try:
-            extension = validate_image_upload(value)
+            # Renvoie le fichier prêt à stocker : un HEIC est converti en JPEG.
+            return prepare_image_upload(value)
         except DjangoValidationError as exc:
             raise serializers.ValidationError(list(exc.messages)) from exc
-        normalize_uploaded_image_name(value, extension)
-        return value
 
     def validate_external_image_url(self, value: str) -> str:
         value = (value or "").strip()

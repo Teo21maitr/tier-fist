@@ -5,6 +5,7 @@ import { useItems, useRefreshTierList } from '../../api/queries'
 import { LaurentBubble } from '../../components/LaurentBubble'
 import { EmptyState, ErrorNote, ItemImage, Modal, Spinner } from '../../components/ui'
 import type { Item, TierList } from '../../types'
+import { ACCEPTED_IMAGE_TYPES, ACCEPTED_IMAGE_LABEL } from './imageFormats'
 
 type ImageMode = 'none' | 'upload' | 'url'
 
@@ -230,10 +231,17 @@ function ItemDialog({
             <input
               ref={fileInput}
               type="file"
-              accept="image/*"
+              accept={ACCEPTED_IMAGE_TYPES}
               className="mt-3 block w-full text-sm"
               aria-label="Fichier image"
+              aria-describedby="item-image-formats"
             />
+          )}
+          {imageMode === 'upload' && (
+            <p id="item-image-formats" className="mt-1 text-xs text-muted">
+              {ACCEPTED_IMAGE_LABEL}. Les photos iPhone (HEIC) sont converties
+              automatiquement.
+            </p>
           )}
           {imageMode === 'url' && (
             <input

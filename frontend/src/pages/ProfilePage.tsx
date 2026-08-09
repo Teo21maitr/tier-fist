@@ -6,6 +6,7 @@ import { useAuth } from '../features/auth/AuthContext'
 import { LaurentBubble } from '../components/LaurentBubble'
 import { Avatar, ErrorNote, Spinner, SuccessNote } from '../components/ui'
 import type { CurrentUser } from '../types'
+import { ACCEPTED_IMAGE_TYPES, ACCEPTED_IMAGE_LABEL } from '../features/items/imageFormats'
 
 export function ProfilePage() {
   const { user } = useAuth()
@@ -83,11 +84,12 @@ export function ProfilePage() {
             <label className="label" htmlFor="avatar">
               Avatar (facultatif)
             </label>
+            <p className="mb-1 text-xs text-muted">{ACCEPTED_IMAGE_LABEL}</p>
             <input
               id="avatar"
               ref={fileInput}
               type="file"
-              accept="image/*"
+              accept={ACCEPTED_IMAGE_TYPES}
               className="block w-full text-sm"
               onChange={(event) => {
                 const file = event.target.files?.[0]

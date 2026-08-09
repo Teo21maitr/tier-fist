@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
 from accounts.models import User, UserStatus
-from common.uploads import normalize_uploaded_image_name, validate_image_upload
+from common.uploads import prepare_image_upload
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -109,11 +109,10 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         if value in (None, ""):
             return value
         try:
-            extension = validate_image_upload(value)
+            # Renvoie le fichier prêt à stocker : un HEIC est converti en JPEG.
+            return prepare_image_upload(value)
         except DjangoValidationError as exc:
             raise serializers.ValidationError(list(exc.messages)) from exc
-        normalize_uploaded_image_name(value, extension)
-        return value
 
     def update(self, instance: User, validated_data) -> User:
         if validated_data.pop("remove_avatar", False):
