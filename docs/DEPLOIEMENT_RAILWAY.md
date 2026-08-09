@@ -169,8 +169,18 @@ injecte tout seul, et en déduit les deux.
 
 Service **web** → **Settings** → section **Networking** → **Generate Domain**.
 
-Railway propose un port : indique **8000**, ou laisse-le détecter (le conteneur
-écoute sur `$PORT`, que Railway fournit).
+Railway demande un **target port**. **Laisse-le détecter tout seul**, ou saisis
+**8080**.
+
+> C'est le piège le plus courant. Le conteneur écoute sur `$PORT`, une variable
+> que Railway injecte et dont la valeur par défaut est **8080** — pas 8000. Si
+> le domaine pointe vers un autre port, l'application démarre normalement, la
+> sonde passe au vert, et pourtant toutes les pages répondent **502 Bad
+> Gateway** : le proxy frappe une porte où personne n'écoute.
+>
+> Pour vérifier la valeur réelle, cherche cette ligne dans les *Deploy Logs* :
+> `[INFO] Listening at: http://0.0.0.0:8080`. Le target port du domaine doit
+> être ce nombre.
 
 Tu obtiens une URL du type `tier-fist-production.up.railway.app`.
 
@@ -285,6 +295,7 @@ git checkout develop
 | `Healthcheck failed` | La base n'est pas branchée | Vérifie la référence `DATABASE_URL` (étape 3.1) |
 | `DisallowedHost` avec un domaine personnalisé | Domaine absent de la configuration | Ajoute `ALLOWED_HOSTS` et `CSRF_TRUSTED_ORIGINS` |
 | `CSRF verification failed` à la connexion | Origine non déclarée | `CSRF_TRUSTED_ORIGINS=https://ton-domaine` (avec `https://`) |
+| **502 Bad Gateway** alors que les logs montrent `Listening at: http://0.0.0.0:8080` | Le target port du domaine ne correspond pas à `$PORT` | Settings → Networking → règle le target port sur **8080** (étape 6) |
 | Page blanche, 404 sur les fichiers `.js` | `collectstatic` a échoué au build | Regarde les *Build Logs* ; le build frontend a dû échouer avant |
 | Les images disparaissent après un redéploiement | Volume absent ou mal monté | Point de montage exactement `/data/media` (étape 4) |
 | `relation ... does not exist` | Migrations non passées | Regarde les *Deploy Logs* : `migrate` tourne avant gunicorn |
