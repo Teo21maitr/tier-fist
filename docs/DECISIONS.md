@@ -183,3 +183,20 @@ sur le moteur réellement utilisé en production.
 
 En local, `docker compose up -d postgres` expose PostgreSQL sur le port **5433**
 pour ne pas entrer en conflit avec une instance déjà installée sur 5432.
+
+## Service des images uploadées en production
+
+`django.conf.urls.static.static()` ne renvoie aucune route dès que `DEBUG=False`.
+Utilisé pour `MEDIA_URL`, il produit un bug qui n'apparaît qu'en production : les
+requêtes `/media/...` ne sont plus routées, tombent dans le catch-all du SPA et
+renvoient du HTML là où le navigateur attend une image.
+
+Le routage des médias est donc déclaré explicitement, indépendamment de `DEBUG`,
+via `django.views.static.serve`. Ce dernier s'appuie sur `safe_join`, ce qui
+satisfait l'exigence de protection contre le path traversal (spec §51).
+
+Les fichiers transitent par gunicorn plutôt que par un serveur dédié : sur
+Railway il n'y a ni nginx ni CDN devant l'application, et le volume est monté
+directement dans le conteneur. C'est un compromis assumé à l'échelle du produit ;
+si le trafic média devenait significatif, la bonne évolution serait un stockage
+objet (S3) plutôt qu'un réglage de serveur.
