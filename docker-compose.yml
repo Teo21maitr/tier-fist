@@ -1,0 +1,21 @@
+services:
+  postgres:
+    # Surchargeable via POSTGRES_IMAGE si l'image locale diffère.
+    image: ${POSTGRES_IMAGE:-postgres:16-alpine}
+    container_name: tierfist-postgres
+    environment:
+      POSTGRES_DB: tierfist
+      POSTGRES_USER: tierfist
+      POSTGRES_PASSWORD: tierfist
+    ports:
+      - "5433:5432"
+    volumes:
+      - tierfist-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tierfist -d tierfist"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  tierfist-pgdata:
