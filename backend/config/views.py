@@ -1,6 +1,25 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.db import connection
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+
+
+def healthz(request):
+    """Sonde de santé utilisée par Railway pendant le déploiement.
+
+    Vérifie que l'application répond *et* que la base est joignable : un
+    ``DATABASE_URL`` mal configuré doit faire échouer le déploiement plutôt que
+    de mettre en ligne une version cassée.
+
+    Cette route est exemptée de la redirection HTTPS (voir ``SECURE_REDIRECT_EXEMPT``) :
+    la sonde interroge le conteneur en HTTP, sans passer par le proxy TLS.
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+    except Exception:
+        return JsonResponse({"status": "error", "database": "unreachable"}, status=503)
+    return JsonResponse({"status": "ok"})
 
 
 def spa_index(request, resource: str = ""):

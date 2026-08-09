@@ -23,6 +23,10 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default="dev-insecure-key-change-me")
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+# La sonde de santé Railway interroge le conteneur avec cet en-tête Host :
+# sans cette entrée, elle recevrait un 400 DisallowedHost et le déploiement
+# échouerait alors que l'application est saine.
+ALLOWED_HOSTS.append("healthcheck.railway.app")
 # Railway fournit le domaine public via cette variable.
 RAILWAY_PUBLIC_DOMAIN = env("RAILWAY_PUBLIC_DOMAIN", default="")
 if RAILWAY_PUBLIC_DOMAIN:
@@ -168,6 +172,9 @@ X_FRAME_OPTIONS = "DENY"
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
+    # La sonde de santé arrive en HTTP depuis le réseau interne : la rediriger
+    # vers HTTPS ferait échouer tous les déploiements.
+    SECURE_REDIRECT_EXEMPT = [r"^healthz$"]
     SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 

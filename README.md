@@ -142,6 +142,11 @@ et `CSRF_TRUSTED_ORIGINS`.
 Les migrations sont exécutées au démarrage du conteneur. Un redéploiement
 n'efface ni les données PostgreSQL ni les images du volume.
 
+La sonde de santé `/healthz` vérifie que l'application répond **et** que la base
+est joignable : un déploiement mal configuré est refusé plutôt que mis en ligne.
+
+Marche à suivre détaillée : [`docs/DEPLOIEMENT_RAILWAY.md`](docs/DEPLOIEMENT_RAILWAY.md).
+
 ### Branches
 
 - `develop` — développement ;
@@ -163,5 +168,7 @@ réinitialise depuis l'admin.
 
 ## Documentation complémentaire
 
+- [`docs/DEPLOIEMENT_RAILWAY.md`](docs/DEPLOIEMENT_RAILWAY.md) — tutoriel pas à
+  pas pour mettre l'application en production.
 - [`docs/DECISIONS.md`](docs/DECISIONS.md) — décisions techniques prises face aux
   points laissés ouverts par la spécification.

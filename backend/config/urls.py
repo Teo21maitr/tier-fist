@@ -3,9 +3,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
-from config.views import spa_index
+from config.views import healthz, spa_index
 
 urlpatterns = [
+    path("healthz", healthz, name="healthz"),
     path("admin/", admin.site.urls),
     path("api/auth/", include("accounts.urls")),
     path("api/", include("tierlists.urls")),
