@@ -121,7 +121,7 @@ cookies de session fonctionnent sans configuration CORS particulière.
 À provisionner sur Railway :
 
 1. un service web relié à la branche `main` ;
-2. une base **PostgreSQL** Railway (fournit `DATABASE_URL`) ;
+2. une base **PostgreSQL** Railway (fournit `DATABASE_DB`) ;
 3. un **volume persistant** monté sur `/data/media` pour les images uploadées.
 
 Variables d'environnement :
@@ -130,7 +130,7 @@ Variables d'environnement :
 | ----------------------- | ------------------------------------------------- |
 | `DJANGO_SECRET_KEY`     | obligatoire, jamais dans Git                      |
 | `DJANGO_DEBUG`          | `False` en production                             |
-| `DATABASE_URL`          | fourni par Railway                                |
+| `DATABASE_DB`          | fourni par Railway                                |
 | `ALLOWED_HOSTS`         | domaines autorisés                                |
 | `CSRF_TRUSTED_ORIGINS`  | origines HTTPS du domaine                         |
 | `MEDIA_ROOT`            | `/data/media` (volume persistant)                 |

@@ -37,7 +37,7 @@ WORKDIR /app/backend
 
 # collectstatic tourne au build : il ne dépend pas de la base de données.
 RUN DJANGO_SECRET_KEY=build-only DJANGO_DEBUG=False \
-    DATABASE_URL=postgres://user:pass@localhost:5432/db \
+    DATABASE_DB=postgres://user:pass@localhost:5432/db \
     python manage.py collectstatic --noinput
 
 EXPOSE 8000

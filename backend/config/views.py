@@ -8,7 +8,7 @@ def healthz(request):
     """Sonde de santé utilisée par Railway pendant le déploiement.
 
     Vérifie que l'application répond *et* que la base est joignable : un
-    ``DATABASE_URL`` mal configuré doit faire échouer le déploiement plutôt que
+    ``DATABASE_DB`` mal configuré doit faire échouer le déploiement plutôt que
     de mettre en ligne une version cassée.
 
     Cette route est exemptée de la redirection HTTPS (voir ``SECURE_REDIRECT_EXEMPT``) :

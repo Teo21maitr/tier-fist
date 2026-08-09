@@ -12,7 +12,7 @@ Compte le temps : environ **30 minutes** la première fois.
 
 ```text
 Projet « tier-fist »
-├── Postgres          la base de données (fournit DATABASE_URL)
+├── Postgres          la base de données (fournit DATABASE_DB)
 ├── tier-fist (web)   l'application, construite depuis le Dockerfile
 └── Volume            disque persistant monté sur /data/media (les images)
 ```
@@ -99,17 +99,17 @@ Dans le canevas du projet :
 1. Clique sur **+ Create** (ou fais un clic droit sur le fond) → **Database**
    → **Add PostgreSQL**.
 2. Railway crée un service `Postgres` et expose automatiquement une variable
-   `DATABASE_URL`.
+   `DATABASE_DB`.
 
 ### 3.1 Brancher la base sur l'application
 
 Ouvre le service **web** → onglet **Variables** → **+ New Variable** →
-**Add Reference** → choisis `Postgres` puis `DATABASE_URL`.
+**Add Reference** → choisis `Postgres` puis `DATABASE_DB`.
 
 Tu dois obtenir une ligne du type :
 
 ```text
-DATABASE_URL = ${{Postgres.DATABASE_URL}}
+DATABASE_DB = ${{Postgres.DATABASE_DB}}
 ```
 
 C'est une **référence**, pas une copie : si Railway fait tourner les
@@ -154,7 +154,7 @@ MEDIA_ROOT=/data/media
 MAX_UPLOAD_IMAGE_SIZE=5242880
 ```
 
-`DATABASE_URL` est déjà là depuis l'étape 3.
+`DATABASE_DB` est déjà là depuis l'étape 3.
 
 Tu n'as **pas** besoin de renseigner `ALLOWED_HOSTS` ni
 `CSRF_TRUSTED_ORIGINS` : l'application lit `RAILWAY_PUBLIC_DOMAIN`, que Railway
@@ -239,7 +239,7 @@ Choisis un pseudo et un mot de passe solide, puis `exit`.
 >
 > ```bash
 > cd /Users/teomaitrot/Documents/projet-perso/tier-fist/backend
-> DATABASE_URL='<colle DATABASE_PUBLIC_URL ici>' .venv/bin/python manage.py createsuperuser
+> DATABASE_DB='<colle DATABASE_PUBLIC_URL ici>' .venv/bin/python manage.py createsuperuser
 > ```
 
 ---
@@ -282,7 +282,7 @@ git checkout develop
 
 | Symptôme dans les logs | Cause | Correctif |
 |---|---|---|
-| `Healthcheck failed` | La base n'est pas branchée | Vérifie la référence `DATABASE_URL` (étape 3.1) |
+| `Healthcheck failed` | La base n'est pas branchée | Vérifie la référence `DATABASE_DB` (étape 3.1) |
 | `DisallowedHost` avec un domaine personnalisé | Domaine absent de la configuration | Ajoute `ALLOWED_HOSTS` et `CSRF_TRUSTED_ORIGINS` |
 | `CSRF verification failed` à la connexion | Origine non déclarée | `CSRF_TRUSTED_ORIGINS=https://ton-domaine` (avec `https://`) |
 | Page blanche, 404 sur les fichiers `.js` | `collectstatic` a échoué au build | Regarde les *Build Logs* ; le build frontend a dû échouer avant |

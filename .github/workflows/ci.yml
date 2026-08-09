@@ -21,7 +21,7 @@ jobs:
           --health-cmd "pg_isready -U tierfist" --health-interval 5s
           --health-timeout 5s --health-retries 10
     env:
-      DATABASE_URL: postgres://tierfist:tierfist@localhost:5432/tierfist
+      DATABASE_DB: postgres://tierfist:tierfist@localhost:5432/tierfist
       DJANGO_SECRET_KEY: ci-only-not-a-secret
       DJANGO_DEBUG: 'True'
     steps:
