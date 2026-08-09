@@ -8,6 +8,7 @@ SQLite n'est jamais utilisé, y compris pour les tests.
 from pathlib import Path
 
 import environ
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 REPO_DIR = BASE_DIR.parent
@@ -86,12 +87,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": env.db_url(
-        "DATABASE_URL",
-        default="postgres://tierfist:tierfist@localhost:5433/tierfist",
+# En développement, l'absence de DATABASE_URL retombe sur le PostgreSQL de
+# docker-compose. En production, ce repli serait un piège : le conteneur
+# tenterait de joindre 127.0.0.1 et échouerait avec une pile d'appels illisible.
+# On préfère refuser de démarrer avec un message explicite.
+DEV_DATABASE_URL = "postgres://tierfist:tierfist@localhost:5433/tierfist"
+if not DEBUG and not env("DATABASE_URL", default=""):
+    raise ImproperlyConfigured(
+        "DATABASE_URL n'est pas définie alors que DJANGO_DEBUG=False.\n"
+        "Sur Railway : ouvre le service web -> onglet Variables -> New Variable "
+        "-> Add Reference -> choisis le service Postgres puis DATABASE_URL.\n"
+        "La variable doit apparaître sous la forme ${{Postgres.DATABASE_URL}}."
     )
-}
+
+DATABASES = {"default": env.db_url("DATABASE_URL", default=DEV_DATABASE_URL)}
 DATABASES["default"].setdefault("CONN_MAX_AGE", 60)
 
 AUTH_USER_MODEL = "accounts.User"
